@@ -1,25 +1,43 @@
 pipeline {
     agent any
 
+    parameters {
+        string(name: 'VERSION_TAG', defaultValue: '', description: 'Optional: Enter custom Docker image tag (e.g. v1.0.0), or leave empty to use build number')
+    }
+
     environment {
         IMAGE_NAME = "arunaravichandran/assetmanagement"
-        IMAGE_TAG = "${params.VERSION_TAG ?: BUILD_NUMBER}"
-        DOCKER_CREDENTIALS_ID = "docker_hub_Id"   // Jenkins Docker Hub credential ID
-        GIT_CREDENTIALS_ID = "github-pat"         // Jenkins Git credential ID (if private repo)
-        GIT_REPO_URL = "https://github.com/ArunaAnandhakrishnan/Asset_Managment.git"
-        GIT_BRANCH = "main"
+        DOCKER_CREDENTIALS_ID = "docker_hub_Id"       // Your Docker Hub credentials ID in Jenkins
+        GIT_CREDENTIALS_ID     = "github-pat"          // Your GitHub PAT credentials ID
+        GIT_REPO_URL           = "https://github.com/ArunaAnandhakrishnan/Asset_Managment.git"
+        GIT_BRANCH             = "main"
     }
 
     tools {
-        maven "MAVEN_HOME"
+        maven "MAVEN_HOME" // Make sure Jenkins has this Maven tool configured
     }
 
     stages {
-        stage('Checkout Code from Git') {
+        stage('Set Image Tag') {
             steps {
-                git branch: "${env.GIT_BRANCH}",
-                    url: "${env.GIT_REPO_URL}",
-                    credentialsId: "${env.GIT_CREDENTIALS_ID}"
+                script {
+                    def tag = params.VERSION_TAG?.trim()
+                    if (!tag) {
+                        tag = env.BUILD_NUMBER
+                    }
+                    // Replace invalid Docker tag characters like colon (:)
+                    tag = tag.replaceAll("[:]", "-")
+                    env.IMAGE_TAG = tag
+                    echo "✅ Using image tag: ${env.IMAGE_TAG}"
+                }
+            }
+        }
+
+        stage('Checkout Code from GitHub') {
+            steps {
+                git branch: env.GIT_BRANCH,
+                    url: env.GIT_REPO_URL,
+                    credentialsId: env.GIT_CREDENTIALS_ID
             }
         }
 
@@ -50,10 +68,10 @@ pipeline {
 
     post {
         success {
-            echo "✅ Docker image pushed to Docker Hub successfully!"
+            echo "✅ Docker image %IMAGE_NAME%:%IMAGE_TAG% pushed to Docker Hub successfully!"
         }
         failure {
-            echo "❌ Pipeline failed. Check logs above for details."
+            echo "❌ Build failed. Please check the console output for error details."
         }
     }
 }
