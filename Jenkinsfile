@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "arunaravichandran/assetmanagement:2"
+        IMAGE_NAME = "assetmanagement:2"
         IMAGE_TAG = "${BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "docker_hub_Id"   // Jenkins Docker Hub credential ID
         GIT_CREDENTIALS_ID = "github-pat"         // Jenkins Git credential ID (if private repo)
