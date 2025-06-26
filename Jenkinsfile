@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = "arunaravichandran/assetmanagement"
+        IMAGE_NAME = "arunaanandhakrishnan/assetmanagement"
         DOCKER_CREDENTIALS_ID = "docker_hub_Id"       // Your Docker Hub credentials ID in Jenkins
         GIT_CREDENTIALS_ID     = "github-pat"          // Your GitHub PAT credentials ID
         GIT_REPO_URL           = "https://github.com/ArunaAnandhakrishnan/Asset_Managment.git"
