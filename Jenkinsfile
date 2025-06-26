@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         IMAGE_NAME = "arunaravichandran/assetmanagement"
-        IMAGE_TAG = "${BUILD_NUMBER}"
+        IMAGE_TAG = "${params.VERSION_TAG ?: BUILD_NUMBER}"
         DOCKER_CREDENTIALS_ID = "docker_hub_Id"   // Jenkins Docker Hub credential ID
         GIT_CREDENTIALS_ID = "github-pat"         // Jenkins Git credential ID (if private repo)
         GIT_REPO_URL = "https://github.com/ArunaAnandhakrishnan/Asset_Managment.git"
